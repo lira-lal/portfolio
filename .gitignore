@@ -1,0 +1,6 @@
+# macOS
+.DS_Store
+
+# 사이트에서 참조하지 않는 대용량 파일 (저장소 용량 절약)
+files/김리라_포트폴리오.pdf
+files/Contact_bg.png
