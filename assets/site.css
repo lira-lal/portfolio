@@ -555,6 +555,13 @@ img { max-width: 100%; display: block; }
 .pdf-fab:hover{ background: #1B2534; transform: translateY(-2px); }
 .pdf-fab .arw{ font-family: var(--mono); font-size: 13px; }
 
+/* button 요소로도 쓰이므로 기본 스타일 정리 */
+.pdf-fab{ border: 0; font-family: var(--sans); cursor: pointer; }
+.pdf-fab:disabled{
+  opacity: .38; cursor: not-allowed; box-shadow: none;
+}
+.pdf-fab:disabled:hover{ background: var(--ink); transform: none; }
+
 /* 이력서 페이지: 이름 옆 연락처 수평 정렬 */
 .rsm-head-row{
   display: grid; grid-template-columns: var(--rsm-col) 1fr;
