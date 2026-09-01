@@ -534,7 +534,6 @@ img { max-width: 100%; display: block; }
 }
 .contact-inline a:hover{ color: var(--blue); border-bottom-color: var(--blue); }
 .contact-inline span{ color: var(--ink); }
-.contact-inline .sep{ color: var(--ink-3); font-style: normal; }
 
 /* Portfolio · GitHub — 검은 버튼 */
 .contact-btns{
