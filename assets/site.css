@@ -649,14 +649,15 @@ img { max-width: 100%; display: block; }
 }
 .exp-aside .chip:hover{ background: rgba(14,21,32,.05); color: var(--ink); }
 .exp-aside .chip[aria-pressed="true"]{
-  background: var(--ink); border-color: var(--ink); color: #fff; font-weight: 600;
+  background: var(--blue-soft); border-color: var(--blue-soft);
+  color: var(--blue); font-weight: 700;
 }
 .exp-aside .chip .n{
   margin-left: 0; opacity: 1; color: var(--ink-3);
   font-family: var(--num); font-size: 12px; font-variant-numeric: tabular-nums;
 }
 .exp-aside .chip:hover .n{ color: var(--ink-2); }
-.exp-aside .chip[aria-pressed="true"] .n{ color: rgba(255,255,255,.6); }
+.exp-aside .chip[aria-pressed="true"] .n{ color: var(--blue); opacity: .55; }
 .exp-main{ min-width: 0; }
 
 .filters{ display: grid; gap: 10px; padding-bottom: 28px; }
