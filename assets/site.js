@@ -23,6 +23,36 @@
     window.addEventListener('scroll', onScroll, { passive: true });
   }
 
+  /* ── Cover: 독립된 물방울 레이어마다 다른 패럴랙스 적용 ── */
+  var cover = document.querySelector('.cover');
+  var coverDrops = cover ? Array.prototype.slice.call(cover.querySelectorAll('.cover-drop')) : [];
+  var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (cover && coverDrops.length && window.requestAnimationFrame) {
+    var coverTicking = false;
+    var moveCoverDrops = function () {
+      var bounds = cover.getBoundingClientRect();
+      var progress = Math.max(0, Math.min(1, -bounds.top / bounds.height));
+      var distance = window.innerWidth <= 720 ? 125 : 200;
+      if (reduceMotion) distance *= .55;
+      coverDrops.forEach(function (drop) {
+        var depth = drop.classList.contains('cover-drop--structure') ? -.82 :
+                    (drop.classList.contains('cover-drop--experience') ? 1.18 : 1);
+        var y = (progress * distance * depth).toFixed(1);
+        drop.style.transform = 'translate3d(0,' + y + 'px,0)';
+      });
+      coverTicking = false;
+    };
+    var scheduleCoverBg = function () {
+      if (!coverTicking) {
+        coverTicking = true;
+        window.requestAnimationFrame(moveCoverDrops);
+      }
+    };
+    moveCoverDrops();
+    window.addEventListener('scroll', scheduleCoverBg, { passive: true });
+    window.addEventListener('resize', scheduleCoverBg, { passive: true });
+  }
+
   /* ── 동료 리뷰 마퀴 (메인) ──────────────────────────── */
   var voicesEl = document.getElementById('voices');
   if (voicesEl && window.VOICES) {

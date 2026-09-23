@@ -228,61 +228,51 @@ img { max-width: 100%; display: block; }
   min-height: 100vh;
   min-height: 100svh;
   display: flex; flex-direction: column; align-items: center; justify-content: center;
-  /* 하단 스크롤 화살표 자리를 감안해 콘텐츠를 중앙보다 살짝 위로 둔다.
-     justify-content:center 는 패딩 안쪽을 기준으로 잡으므로 아래 패딩을 더 크게. */
-  padding: 96px 0 144px; background: var(--surface);
+  padding: 96px 0 112px;
+  background:
+    radial-gradient(ellipse 56% 82% at 14% 38%, rgba(164,190,255,.34), transparent 72%),
+    radial-gradient(ellipse 48% 74% at 86% 7%, rgba(177,236,222,.31), transparent 70%),
+    radial-gradient(ellipse 70% 62% at 78% 100%, rgba(166,190,255,.30), transparent 70%),
+    linear-gradient(125deg, #edf2fa 0%, #f8f9fb 52%, #edf3fb 100%);
 }
-.cover > *:not(.cover-bg){ position: relative; z-index: 1; }
+.cover > *:not(.cover-art){ position: relative; z-index: 1; }
 
-/* ── 표지 배경: 내보낸 그라데이션 이미지 ──────────────── */
-.cover-bg{
-  position: absolute; inset: 0; z-index: 0; pointer-events: none;
-  background: url(../files/cover_bg.png) center / cover no-repeat;
+/* ── 표지 물방울: 배경과 분리된 개별 패럴랙스 레이어 ──── */
+.cover-art{ position:absolute; inset:0; z-index:0; overflow:hidden; pointer-events:none; }
+.cover-drop{
+  position:absolute; max-width:none; height:auto; object-fit:contain;
+  transform:translate3d(0,var(--drop-shift,0px),0);
+  transform-origin:center; backface-visibility:hidden; filter:saturate(.78);
 }
+.cover-drop--discovery{ width:39vw; max-width:760px; left:-5%; top:12%; }
+.cover-drop--structure{ width:36vw; max-width:700px; left:45%; top:-24%; }
+.cover-drop--experience{ width:47vw; max-width:900px; right:-12%; bottom:9%; }
 
-.cover-meta{
-  display: flex; gap: 14px; align-items: center;
-  font-family: var(--num); font-size: 12px; letter-spacing: .14em;
-  text-transform: uppercase; color: var(--ink-3); margin-bottom: 44px;
+.cover-brand,.cover-bottom-left,.cover-bottom-right{
+  position: absolute !important; z-index: 2 !important;
+  font-family: var(--num); font-size: 11px; font-weight: 600;
+  letter-spacing: .16em; line-height: 1.7; color: #606b7a;
 }
-.cover-meta .dot{ width: 3px; height: 3px; border-radius: 50%; background: var(--ink-3); }
+.cover-brand{ top: 5.2%; left: 3.6%; display: flex; flex-direction: column; }
+.cover-brand span:first-child{ color: var(--ink); }
+.cover-brand i,.cover-bottom-left i,.cover-bottom-right i{
+  display: block; width: 28px; height: 1px; background: rgba(50,61,78,.55);
+}
+.cover-brand i{ margin-top: 20px; }
 .cover h1{
-  font-size: 84px; font-weight: 800; letter-spacing: 1px; line-height: 1.06;
-  color: var(--ink); text-align: center;
+  max-width: 90vw; font-size: clamp(58px, 7.1vw, 104px); font-weight: 850;
+  letter-spacing: 1px; line-height: .98; color: #0e1520; text-align: center;
+  text-shadow: 0 2px 0 rgba(255,255,255,.32);
 }
 .cover h1 span{ display: block; }
 .cover-sub{
-  margin-top: 28px; font-size: 17px; color: var(--ink-2); text-align: center;
+  margin-top: 24px; padding: 0 24px; font-size: 16px; color: #667180; text-align: center;
 }
-/* 액션 — 이력서 · 프로젝트 */
-.cover-actions{ margin-top: 48px; display: flex; gap: 14px; justify-content: center; }
-.cover-btn{
-  display: inline-flex; align-items: center; justify-content: center;
-  width: 140px; box-sizing: border-box;
-  padding: 15px 34px; border-radius: 999px; border: 0;
-  background: var(--ink); color: #fff; text-decoration: none;
-  font-size: 14px; font-weight: 600; letter-spacing: -.01em;
-  transition: transform .18s ease, background .18s ease;
-}
-.cover-btn:hover{ transform: translateY(-2px); background: #000; }
-.cover-name{
-  margin-top: 72px; font-family: var(--num); font-size: 12px; font-weight: 500;
-  letter-spacing: .3em; text-transform: uppercase; color: var(--ink);
-}
-/* 스크롤 유도 화살표 — .cover > * 규칙이 position:relative 를 걸어
-   같은 특정도(.cover .cover-cue)로 덮어쓴다. */
-.cover .cover-cue{
-  position: absolute; left: 50%; bottom: 44px; z-index: 1;
-  display: grid; place-items: center; width: 44px; height: 44px;
-  color: var(--ink-2); text-decoration: none; opacity: .62;
-  animation: cue 2.4s ease-in-out infinite;
-  transition: opacity .2s ease;
-}
-.cover .cover-cue:hover{ opacity: 1; }
-@keyframes cue{
-  0%, 100%{ transform: translate(-50%, 0); }
-  50%     { transform: translate(-50%, 8px); }
-}
+.cover-bottom-left,.cover-bottom-right{ bottom: 5.5%; display: flex; align-items: center; gap: clamp(16px, 2.2vw, 36px); font-size: 10px; letter-spacing: .12em; }
+.cover-bottom-left{ left: 3.6%; }
+.cover-bottom-left i{ margin-right: 2px; }
+.cover-bottom-right{ right: 3.6%; gap: 18px; }
+.cover-bottom-right i{ width: 28px; }
 
 /* ── How to work: 좌측 타이틀 고정 · 우측만 스크롤 ──── */
 /* 섹션을 세로로 가르는 얇은 구분선 — 컨테이너 양끝과 두 컬럼 사이 */
@@ -573,12 +563,18 @@ img { max-width: 100%; display: block; }
 @media (max-width: 720px){
   .sec{ padding: 88px 0; }
   .sec h2{ font-size: 24px; line-height: 1.5; }
-  .cover{ min-height: auto; padding: calc(72px + var(--nav-h)) 0 56px; }
-  .cover .cover-cue{ bottom: 24px; }
-  .cover h1{ font-size: 40px; letter-spacing: 1px; }
-  .cover-meta{ margin-bottom: 32px; font-size: 12px; }
-  .cover-sub{ font-size: 15px; }
-  .cover-name{ margin-top: 48px; }
+  .cover{ min-height: 100svh; padding: 110px 18px 104px; }
+  .cover-drop--discovery{ width:72vw; left:-28%; top:21%; }
+  .cover-drop--structure{ width:62vw; left:42%; top:-16%; }
+  .cover-drop--experience{ width:82vw; right:-42%; bottom:17%; }
+  .cover-brand,.cover-bottom-left,.cover-bottom-right{ font-size: 9px; }
+  .cover-brand{ top: 24px; left: 20px; }
+  .cover-brand i{ margin-top: 10px; }
+  .cover h1{ max-width: 100%; font-size: clamp(36px, 9vw, 58px); letter-spacing: 1px; }
+  .cover-sub{ max-width: 420px; margin-top: 20px; font-size: 14px; }
+  .cover-bottom-left{ display: none; }
+  .cover-bottom-right{ right: 20px; bottom: 24px; gap: 10px; font-size: 8px; letter-spacing: .08em; }
+  .cover-bottom-right i{ width: 18px; }
   .how .how-title{ font-size: 34px; }
   .pillars{ gap: 52px; }
   .more-grid{ grid-template-columns: 1fr; gap: 36px; }
