@@ -228,52 +228,18 @@ img { max-width: 100%; display: block; }
   min-height: 100vh;
   min-height: 100svh;
   display: flex; flex-direction: column; align-items: center; justify-content: center;
-  padding: calc(96px + var(--nav-h)) 0 72px; background: var(--surface);
+  /* 하단 스크롤 화살표 자리를 감안해 콘텐츠를 중앙보다 살짝 위로 둔다.
+     justify-content:center 는 패딩 안쪽을 기준으로 잡으므로 아래 패딩을 더 크게. */
+  padding: 96px 0 144px; background: var(--surface);
 }
 .cover > *:not(.cover-bg){ position: relative; z-index: 1; }
 
-/* ── 표지 배경: bloom field gradient ────────────────── */
+/* ── 표지 배경: 내보낸 그라데이션 이미지 ──────────────── */
 .cover-bg{
   position: absolute; inset: 0; z-index: 0; pointer-events: none;
-  background:
-    radial-gradient(58% 52% at 16% 20%, rgba(150,190,236,.92), rgba(150,190,236,0) 64%),
-    radial-gradient(52% 48% at 80% 26%, rgba(104,152,226,.78), rgba(104,152,226,0) 62%),
-    radial-gradient(72% 58% at 48% 96%, rgba(200,224,180,.92), rgba(200,224,180,0) 62%),
-    radial-gradient(42% 38% at 92% 82%, rgba(230,231,176,.62), rgba(230,231,176,0) 64%),
-    linear-gradient(170deg, #E9F1FB 0%, #EFF5EC 100%);
+  background: url(../files/cover_bg.png) center / cover no-repeat;
 }
-.cover-bg .bloom{
-  position: absolute; border-radius: 50%;
-  filter: blur(72px); opacity: .55;
-  will-change: transform;
-}
-.bloom-1{
-  width: 46vw; height: 46vw; left: -6vw; top: -12vw;
-  background: #8CB6E8;
-  animation: bloom-a 26s ease-in-out infinite alternate;
-}
-.bloom-2{
-  width: 38vw; height: 38vw; right: -4vw; top: 4vw;
-  background: #5B8ED9;
-  animation: bloom-b 32s ease-in-out infinite alternate;
-}
-.bloom-3{
-  width: 56vw; height: 40vw; left: 20vw; bottom: -16vw;
-  background: #C3DCA6;
-  animation: bloom-c 38s ease-in-out infinite alternate;
-}
-@keyframes bloom-a{
-  from{ transform: translate3d(0,0,0) scale(1); }
-  to  { transform: translate3d(6vw, 4vh, 0) scale(1.12); }
-}
-@keyframes bloom-b{
-  from{ transform: translate3d(0,0,0) scale(1.06); }
-  to  { transform: translate3d(-5vw, 6vh, 0) scale(.94); }
-}
-@keyframes bloom-c{
-  from{ transform: translate3d(0,0,0) scale(1); }
-  to  { transform: translate3d(-7vw, -5vh, 0) scale(1.1); }
-}
+
 .cover-meta{
   display: flex; gap: 14px; align-items: center;
   font-family: var(--num); font-size: 12px; letter-spacing: .14em;
@@ -303,14 +269,19 @@ img { max-width: 100%; display: block; }
   margin-top: 72px; font-family: var(--num); font-size: 12px; font-weight: 500;
   letter-spacing: .3em; text-transform: uppercase; color: var(--ink);
 }
-.cover-cue{
-  margin-top: 76px; width: 1px; height: 56px;
-  background: linear-gradient(to bottom, var(--ink-3), transparent);
+/* 스크롤 유도 화살표 — .cover > * 규칙이 position:relative 를 걸어
+   같은 특정도(.cover .cover-cue)로 덮어쓴다. */
+.cover .cover-cue{
+  position: absolute; left: 50%; bottom: 44px; z-index: 1;
+  display: grid; place-items: center; width: 44px; height: 44px;
+  color: var(--ink-2); text-decoration: none; opacity: .62;
   animation: cue 2.4s ease-in-out infinite;
+  transition: opacity .2s ease;
 }
+.cover .cover-cue:hover{ opacity: 1; }
 @keyframes cue{
-  0%, 100%{ opacity: .25; transform: scaleY(.7); transform-origin: top; }
-  50%{ opacity: 1; transform: scaleY(1); transform-origin: top; }
+  0%, 100%{ transform: translate(-50%, 0); }
+  50%     { transform: translate(-50%, 8px); }
 }
 
 /* ── How to work: 좌측 타이틀 고정 · 우측만 스크롤 ──── */
@@ -603,10 +574,7 @@ img { max-width: 100%; display: block; }
   .sec{ padding: 88px 0; }
   .sec h2{ font-size: 24px; line-height: 1.5; }
   .cover{ min-height: auto; padding: calc(72px + var(--nav-h)) 0 56px; }
-  .cover-bg .bloom{ filter: blur(48px); }
-  .bloom-1{ width: 80vw; height: 80vw; }
-  .bloom-2{ width: 70vw; height: 70vw; }
-  .bloom-3{ width: 96vw; height: 70vw; left: 8vw; }
+  .cover .cover-cue{ bottom: 24px; }
   .cover h1{ font-size: 40px; letter-spacing: 1px; }
   .cover-meta{ margin-bottom: 32px; font-size: 12px; }
   .cover-sub{ font-size: 15px; }
