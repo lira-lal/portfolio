@@ -79,6 +79,10 @@
             .sort(function (a, b) { return a.thumb.localeCompare(b.thumb); })
       : DATA;
 
+    /* 메인의 요약 띠는 data-limit 만큼만 */
+    var limit = gridEl && parseInt(gridEl.getAttribute('data-limit'), 10);
+    if (limit > 0) SOURCE = SOURCE.slice(0, limit);
+
     hostEl.innerHTML = SOURCE.map(function (p, idx) {
       var body = [];
 
@@ -157,14 +161,15 @@
         var inner =
           '<div class="pcard-visual">' +
             '<img src="' + esc(p.thumb) + '" alt="' + esc(p.title) + ' 썸네일" loading="lazy">' +
-            (p.detail ? '<i class="pcard-plus" aria-hidden="true"></i>' : '') +
+            (p.detail ? '<i class="pcard-go" aria-hidden="true">' +
+              '<svg viewBox="0 0 24 24" width="20" height="20">' +
+                '<path d="M5 12h13M12.4 5.8l6.2 6.2-6.2 6.2" fill="none" stroke="currentColor" ' +
+                'stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>' +
+              '</svg></i>' : '') +
           '</div>' +
           '<div class="pcard-body">' +
-            (meta ? '<span class="pcard-meta">' + esc(meta) + '</span>' : '') +
             '<h3 class="pcard-title">' + esc(p.title) + '</h3>' +
-            ((p.tags && p.tags.length) ? '<div class="prj-tags">' + p.tags.map(function (t) {
-                return '<span>' + esc(t) + '</span>';
-              }).join('') + '</div>' : '') +
+            (meta ? '<span class="pcard-meta">' + esc(meta) + '</span>' : '') +
           '</div>';
 
         var attrs = ' id="' + esc(p.id) + '"' +
@@ -212,7 +217,18 @@
       });
       var tagTotal = {};
       DATA.forEach(function (p) { (p.tags || []).forEach(function (t) { tagTotal[t] = (tagTotal[t] || 0) + 1; }); });
-      allTags.sort(function (a, b) { return tagTotal[b] - tagTotal[a] || a.localeCompare(b, 'ko'); });
+      /* 태그 노출 순서는 data/projects.js 의 TAG_ORDER 를 따르고,
+         거기 없는 태그만 개수 순으로 뒤에 붙인다. */
+      var order = window.TAG_ORDER || [];
+      allTags.sort(function (a, b) {
+        var ia = order.indexOf(a), ib = order.indexOf(b);
+        if (ia !== -1 || ib !== -1) {
+          if (ia === -1) return 1;
+          if (ib === -1) return -1;
+          return ia - ib;
+        }
+        return tagTotal[b] - tagTotal[a] || a.localeCompare(b, 'ko');
+      });
 
       var active = { company: '', tag: '' };
 
@@ -303,5 +319,135 @@
     };
     openFromHash();
     window.addEventListener('hashchange', openFromHash);
+  }
+
+  /* ── 아직 받지 않은 목업은 자리표시로 대체 ───────────── */
+  var placehold = function (img) {
+    var ph = document.createElement('div');
+    ph.className = 'mock-ph';
+    var name = document.createElement('span');
+    name.textContent = img.getAttribute('alt') || 'Mockup';
+    var file = document.createElement('em');
+    file.textContent = img.getAttribute('src') || '';
+    ph.appendChild(name);
+    ph.appendChild(file);
+    if (img.parentNode) img.parentNode.replaceChild(ph, img);
+  };
+  Array.prototype.forEach.call(document.querySelectorAll('.case img'), function (img) {
+    /* 스크립트가 늦게 실행되면 error 를 놓치므로 이미 실패한 것도 함께 처리 */
+    if (img.complete && img.naturalWidth === 0) { placehold(img); return; }
+    img.addEventListener('error', function () { placehold(img); });
+  });
+
+  /* ── 상세 페이지 진입·이탈 슬라이드 ─────────────────── */
+  var stage = document.querySelector('.case-stage');
+  if (stage) {
+    var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    var clearEnter = function (e) {
+      if (e && e.target !== stage) return;   /* 자식 애니메이션 버블링 무시 */
+      stage.classList.remove('is-entering');
+    };
+
+    if (!reduce) {
+      stage.classList.add('is-entering');
+      stage.addEventListener('animationend', clearEnter);
+      /* transform 이 남으면 fixed 인 닫기 버튼이 무대 기준이 되므로 반드시 걷어낸다 */
+      setTimeout(clearEnter, 700);
+    }
+
+    /* 뒤로가기로 되돌아왔을 때 남은 상태 정리 */
+    window.addEventListener('pageshow', function () {
+      stage.classList.remove('is-leaving');
+    });
+
+  /* ── 상세 페이지 섹션 인디케이터 ──────────────────────
+     섹션 수만큼 막대를 세로로 놓고, 현재 위치를 표시한다.
+     .case-stage 가 스크롤 주체라 스크롤 이벤트도 거기서 받는다. */
+  (function () {
+    var st = document.querySelector('.case-stage');
+    if (!st) return;
+    var caseEl = st.querySelector('.case');
+    if (!caseEl) return;
+    var secs = Array.prototype.filter.call(caseEl.children, function (el) {
+      return el.tagName === 'SECTION';
+    });
+    if (secs.length < 3) return;
+
+    var nav = document.createElement('nav');
+    nav.className = 'case-nav';
+    nav.setAttribute('aria-label', '섹션 이동');
+
+    secs.forEach(function (sec, i) {
+      var lab = sec.querySelector('.case-label');
+      var name = lab ? lab.textContent.trim() : (i === 0 ? 'Cover' : 'Section ' + (i + 1));
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'case-nav-i';
+      b.title = name;
+      b.setAttribute('aria-label', name);
+      b.addEventListener('click', function () {
+        st.scrollTo({ top: sec.offsetTop, behavior: 'smooth' });
+      });
+      nav.appendChild(b);
+    });
+    st.appendChild(nav);
+
+    /* 섹션 배경이 어두운지 판단 — 배경색이 투명하면 그라데이션의 첫 색을 본다 */
+    var isDark = function (sec) {
+      var cs = getComputedStyle(sec);
+      var pick = function (str) {
+        var m = str.match(/rgba?\(([^)]+)\)/);
+        if (m) {
+          var v = m[1].split(',').map(parseFloat);
+          if (v.length > 3 && v[3] < .5) return null;
+          return v;
+        }
+        var h = str.match(/#([0-9a-f]{6})/i);
+        if (h) return [parseInt(h[1].slice(0,2),16), parseInt(h[1].slice(2,4),16), parseInt(h[1].slice(4,6),16)];
+        return null;
+      };
+      var v = pick(cs.backgroundColor) || (cs.backgroundImage !== 'none' ? pick(cs.backgroundImage) : null);
+      if (!v) return false;
+      return (0.299 * v[0] + 0.587 * v[1] + 0.114 * v[2]) / 255 < 0.62;
+    };
+    var dark = secs.map(isDark);
+
+    var items = nav.children;
+    var sync = function () {
+      var y = st.scrollTop + st.clientHeight * 0.35;
+      var cur = 0;
+      secs.forEach(function (sec, i) { if (sec.offsetTop <= y) cur = i; });
+      for (var i = 0; i < items.length; i++) {
+        items[i].classList.toggle('is-on', i === cur);
+      }
+      nav.classList.toggle('on-dark', dark[cur]);
+    };
+    st.addEventListener('scroll', sync, { passive: true });
+    window.addEventListener('resize', sync);
+    sync();
+  }());
+
+
+    var closeBtn = document.querySelector('.case-close');
+    if (closeBtn && !reduce) {
+      closeBtn.addEventListener('click', function (e) {
+        if (e.metaKey || e.ctrlKey || e.shiftKey || e.button !== 0) return;
+        e.preventDefault();
+        var href = closeBtn.getAttribute('href');
+        var done = false;
+        var go = function () {
+          if (done) return;
+          done = true;
+          location.href = href;
+        };
+        stage.classList.remove('is-entering');
+        stage.classList.add('is-leaving');
+        stage.addEventListener('animationend', function (ev) {
+          if (ev.target === stage) go();
+        });
+        setTimeout(go, 700);   /* 애니메이션 이벤트가 오지 않을 때 대비 */
+      });
+    }
   }
 })();

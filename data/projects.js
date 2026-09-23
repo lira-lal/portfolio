@@ -9,15 +9,20 @@
    detail: 상세 페이지 경로. 넣으면 썸네일이 그 페이지로 이동하는 링크가 됩니다.
    ============================================================ */
 
+/* 이력서 Experience 태그 필터가 노출되는 순서.
+   여기에 없는 태그는 뒤에 개수 순으로 붙습니다. */
+window.TAG_ORDER = ['UX 개선', '0→1 론칭', '디자인 시스템', '리뉴얼', '수익 모델', '디자인 리드', '브랜딩'];
+
 window.PROJECTS = [
 
   {
     id: 'design-system',
     thumb: 'files/04.png',
+    detail: 'project-04.html',
     title: 'Design Ops 효율 최적화',
     service: 'Tnear · 8개 서비스',
     period: '2024.09 – 2024.12',
-    tags: ['디자인 시스템'],
+    tags: ['디자인 시스템', '디자인 리드'],
     featured: true,
     summary: '8개 서비스가 각자 다른 규칙으로 운영되던 문제를 하나의 시스템으로 묶고, 디자인 리소스 전달을 자동화했습니다.',
     problem: '서비스가 8개로 확장되면서 화면 규칙이 서비스마다 달라졌고, 디자인과 개발이 서로 다른 리소스를 참조하는 상황이 반복됐습니다. 개인의 작업 습관이 아니라 리소스가 오가는 구조 자체의 문제로 정의했습니다.',
@@ -38,6 +43,7 @@ window.PROJECTS = [
   {
     id: 'jigeum-weather',
     thumb: 'files/02.png',
+    detail: 'project-02.html',
     title: '2030 타겟 앱 출시',
     service: 'Tnear · 지금날씨',
     period: '2024.04 – 2024.08',
@@ -61,7 +67,7 @@ window.PROJECTS = [
     title: '디자인키보드 온보딩 및 알림 권한 UX 개선',
     service: 'Tnear · 디자인키보드',
     period: '2024.04',
-    tags: ['UX 개선', '전환'],
+    tags: ['UX 개선'],
     summary: '권한을 요청하는 방식을 팝업에서 전체 페이지로 바꾸고, 요청 순서를 다시 정의했습니다.',
     problem: '초기 이탈과 알림 권한 거절이 겹치면서 핵심 기능이 사용되지 못하고 있었습니다.',
     approach: [
@@ -79,7 +85,7 @@ window.PROJECTS = [
     title: '온보딩 및 권한 요청 UX 재설계',
     service: 'Tnear · 첫화면날씨',
     period: '2023.07 – 2023.08',
-    tags: ['UX 개선', '전환'],
+    tags: ['UX 개선'],
     summary: '권한을 먼저 묻는 대신 서비스 가치를 먼저 경험하게 하고, 필요한 시점에 단계적으로 요청하도록 흐름을 바꿨습니다.',
     problem: '신규 유입은 유지되고 있었지만 첫 실행의 권한 요청 단계에서 이탈이 집중됐습니다. 권한 설정의 문제가 아니라, 서비스를 설명하지 않은 채 행동을 요구하는 구조의 문제로 정의했습니다.',
     approach: [
@@ -125,7 +131,7 @@ window.PROJECTS = [
     title: '디자인 파트 운영 · 리드',
     service: 'Tnear · 디자인파트',
     period: '2022.10 – 2025.05',
-    tags: ['팀 리드'],
+    tags: ['디자인 리드'],
     summary: '2년 7개월간 파트 운영과 8개 서비스의 디자인 품질을 총괄하며, 협업 규칙을 문서가 아니라 Figma 운영 환경에 심었습니다.',
     problem: '스쿼드 구성원이 수시로 바뀌는 환경에서 UX 방향성과 화면 설계 기준이 자연스럽게 공유되지 않았습니다.',
     approach: [
@@ -158,10 +164,11 @@ window.PROJECTS = [
   {
     id: 'translator-subscription',
     thumb: 'files/03.png',
+    detail: 'project-03.html',
     title: '구독 서비스 도입',
     service: 'Tnear · 말하는 번역기',
     period: '2020.02 – 2020.03',
-    tags: ['0→1 론칭', '수익'],
+    tags: ['수익 모델'],
     featured: true,
     summary: '일회성 결제로 정체된 수익 구조를, 사용 맥락 안에서 자연스럽게 전환되는 구독 모델로 바꿨습니다.',
     problem: '출시 2년차에 매출이 정체됐고, 반복 수익 구조가 필요했습니다.',
@@ -184,7 +191,7 @@ window.PROJECTS = [
     title: '키보드 테마 컬러 적용 시스템 구축',
     service: 'Tnear · 디자인키보드',
     period: '2019.08',
-    tags: ['디자인 시스템', '수익'],
+    tags: ['디자인 시스템'],
     summary: '영역별로 제각각이던 컬러 적용 기준을 규칙과 우선순위로 정리해, 테마 변경이 화면 전체에 자동 반영되도록 했습니다.',
     problem: '키보드 영역마다 컬러 적용 기준이 달라 UX 품질과 유지보수 비용 문제가 반복됐습니다.',
     approach: [
@@ -216,7 +223,7 @@ window.PROJECTS = [
     title: 'Knowlounge · Know Recorder',
     service: 'Klounge',
     period: '2016.03 – 2018.03',
-    tags: ['UI·GUI', '브랜딩'],
+    tags: ['브랜딩', '리뉴얼'],
     summary: '교육 서비스 앱의 UI·GUI 디자인과 유지보수·리뉴얼을 담당했습니다.',
     approach: [
       '교육 서비스 어플리케이션의 UI / GUI 디자인, 유지보수와 리뉴얼 담당',
@@ -229,7 +236,7 @@ window.PROJECTS = [
     title: 'ALO',
     service: 'Klounge',
     period: '2017.06 – 2018.03',
-    tags: ['UI·GUI', '브랜딩'],
+    tags: ['브랜딩', '리뉴얼'],
     summary: 'ALO의 UI·GUI 전체 기획과 리뉴얼 디자인을 담당했습니다.',
     approach: [
       'ALO의 UI / GUI 전체적인 기획과 리뉴얼 디자인 업무 담당',

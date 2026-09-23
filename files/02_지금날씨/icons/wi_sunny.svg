@@ -1,0 +1,14 @@
+<svg width="29" height="29" viewBox="0 0 29 29" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="iir_wfr_weathericon_01">
+<path id="Fill 1" fill-rule="evenodd" clip-rule="evenodd" d="M2.82031 14.1019C2.82031 20.3332 7.87072 25.3836 14.1019 25.3836C20.3332 25.3836 25.3836 20.3332 25.3836 14.1019C25.3836 7.87072 20.3332 2.82031 14.1019 2.82031C7.87072 2.82031 2.82031 7.87072 2.82031 14.1019Z" fill="url(#paint0_linear_0_1)" fill-opacity="0.3"/>
+<path id="Fill 2" fill-rule="evenodd" clip-rule="evenodd" d="M5.64062 14.1021C5.64062 18.7755 9.42843 22.5633 14.1018 22.5633C18.7753 22.5633 22.5631 18.7755 22.5631 14.1021C22.5631 9.42867 18.7753 5.64087 14.1018 5.64087C9.42843 5.64087 5.64062 9.42867 5.64062 14.1021Z" fill="url(#paint1_linear_0_1)"/>
+</g>
+<defs><linearGradient id="paint0_linear_0_1" x1="-14.8839" y1="13.9383" x2="13.9387" y2="42.9481" gradientUnits="userSpaceOnUse">
+<stop stop-color="#FFDB49"/>
+<stop offset="1" stop-color="#FDBC10"/>
+</linearGradient>
+<linearGradient id="paint1_linear_0_1" x1="-7.63756" y1="13.9793" x2="13.9794" y2="35.7367" gradientUnits="userSpaceOnUse">
+<stop stop-color="#FFDB49"/>
+<stop offset="1" stop-color="#FDBC10"/>
+</linearGradient></defs>
+</svg>

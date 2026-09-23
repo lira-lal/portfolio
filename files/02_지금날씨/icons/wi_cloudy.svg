@@ -1,0 +1,19 @@
+<svg width="29" height="29" viewBox="0 0 29 29" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="iir_wfr_weathericon_03">
+<path id="Combined Shape" d="M16.8535 4.23071C19.4888 4.23071 21.7214 5.95141 22.4912 8.33032C22.8339 8.23331 23.1956 8.18091 23.5693 8.18091C25.7509 8.18099 27.5195 9.94954 27.5195 12.1311C27.5195 14.3126 25.7508 16.0812 23.5693 16.0813C23.5616 16.0813 23.5537 16.0804 23.5459 16.0803L17.2256 16.0813V16.0676C17.1026 16.0752 16.9784 16.0813 16.8535 16.0813C13.5812 16.0811 10.9287 13.4279 10.9287 10.1555C10.9289 6.88335 13.5813 4.23094 16.8535 4.23071Z" fill="url(#paint0_linear_0_1)"/>
+<path id="Combined Shape_2" d="M11.2812 9.16626C14.31 9.16626 16.8912 11.0763 17.8896 13.7571C18.4619 13.5251 19.0877 13.3967 19.7432 13.3967C22.4688 13.3969 24.6785 15.6066 24.6787 18.3323C24.6787 20.9729 22.6048 23.1296 19.9971 23.262L19.7432 23.2678H4.23047V23.2463C2.28307 23.2463 0.705147 21.6686 0.705078 19.7219C0.705078 17.7745 2.28303 16.1956 4.23047 16.1956C4.24218 12.3114 7.39438 9.16645 11.2812 9.16626Z" fill="url(#paint1_linear_0_1)"/>
+<path id="Fill 36" fill-rule="evenodd" clip-rule="evenodd" d="M24.679 18.3327C24.679 15.6068 22.4692 13.397 19.7433 13.397C17.0174 13.397 14.8076 15.6068 14.8076 18.3327H24.679Z" fill="url(#paint2_linear_0_1)" fill-opacity="0.45"/>
+</g>
+<defs><linearGradient id="paint0_linear_0_1" x1="7.63461" y1="12.1584" x2="19.3259" y2="22.7639" gradientUnits="userSpaceOnUse">
+<stop stop-color="#CFD8DC"/>
+<stop offset="0.745" stop-color="#A4B6BF"/>
+</linearGradient>
+<linearGradient id="paint1_linear_0_1" x1="-4.0608" y1="18.5998" x2="9.85055" y2="33.943" gradientUnits="userSpaceOnUse">
+<stop stop-color="#DCE4E8"/>
+<stop offset="1" stop-color="#B9C8CF"/>
+</linearGradient>
+<linearGradient id="paint2_linear_0_1" x1="14.4729" y1="10.7528" x2="14.4729" y2="18.3327" gradientUnits="userSpaceOnUse">
+<stop stop-color="white"/>
+<stop offset="1" stop-color="white" stop-opacity="0.01"/>
+</linearGradient></defs>
+</svg>

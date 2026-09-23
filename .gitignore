@@ -7,3 +7,27 @@ files/Contact_bg.png
 
 # 전화번호가 담겨 있어 공개 배포에서 제외 (번호 없는 버전으로 교체 후 해제)
 files/김리라_이력서.pdf
+
+# 에디터·도구 작업 폴더
+.impeccable/
+
+# 이전 버전 사본 (project-04.html 로 대체됨)
+_r04.html
+
+# 작업 원본 — 사이트에서 참조하지 않는 파일
+files/*/[0-9][0-9].png
+files/*/스크린샷/
+files/_orig_caption/
+files/*/*_orig.png
+files/02_지금날씨/cover_mockup_prev.png
+files/02_지금날씨/mockup_1.png
+files/02_지금날씨/mockup_2.png
+files/02_지금날씨/out_slide.png
+files/02_지금날씨/ds_component.png
+files/02_지금날씨/ds_icons.png
+files/02_지금날씨/ds_token.png
+files/04_자동화/cover_system.png
+files/04_자동화/flow_steps.png
+files/04_자동화/scale_theme.png
+files/04_자동화/sys_component.png
+files/04_자동화/sys_token.png
