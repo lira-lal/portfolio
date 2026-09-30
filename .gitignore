@@ -31,3 +31,10 @@ files/04_자동화/flow_steps.png
 files/04_자동화/scale_theme.png
 files/04_자동화/sys_component.png
 files/04_자동화/sys_token.png
+
+# 커버 아트 원본·미사용 변환본 (사이트에서 참조하지 않음)
+files/cover-drop-*.png
+files/cover_glass_bg.*
+files/cover_bg.webp
+files/drop-*.png
+files/drop-*.webp

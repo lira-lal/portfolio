@@ -241,11 +241,11 @@ img { max-width: 100%; display: block; }
 .cover-art{ position:absolute; inset:0; z-index:0; overflow:hidden; pointer-events:none; }
 .cover-drop{
   position:absolute; max-width:none; height:auto; object-fit:contain;
-  transform:translate3d(0,var(--drop-shift,0px),0);
+  transform:translate3d(0,var(--drop-shift,0px),0) rotate(var(--drop-rot,0deg));
   transform-origin:center; backface-visibility:hidden; filter:saturate(.78);
 }
-.cover-drop--discovery{ width:39vw; max-width:760px; left:-5%; top:12%; }
-.cover-drop--structure{ width:36vw; max-width:700px; left:45%; top:-24%; }
+.cover-drop--discovery{ width:39vw; max-width:760px; left:calc(-11% - 80px); top:12%; }
+.cover-drop--structure{ width:36vw; max-width:700px; left:45%; top:calc(-24% - 100px); --drop-rot:-10deg; }
 .cover-drop--experience{ width:47vw; max-width:900px; right:-12%; bottom:9%; }
 
 .cover-brand,.cover-bottom-left,.cover-bottom-right{
@@ -564,7 +564,7 @@ img { max-width: 100%; display: block; }
   .sec{ padding: 88px 0; }
   .sec h2{ font-size: 24px; line-height: 1.5; }
   .cover{ min-height: 100svh; padding: 110px 18px 104px; }
-  .cover-drop--discovery{ width:72vw; left:-28%; top:21%; }
+  .cover-drop--discovery{ width:72vw; left:-34%; top:21%; }
   .cover-drop--structure{ width:62vw; left:42%; top:-16%; }
   .cover-drop--experience{ width:82vw; right:-42%; bottom:17%; }
   .cover-brand,.cover-bottom-left,.cover-bottom-right{ font-size: 9px; }

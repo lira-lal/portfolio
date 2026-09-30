@@ -38,7 +38,7 @@
         var depth = drop.classList.contains('cover-drop--structure') ? -.82 :
                     (drop.classList.contains('cover-drop--experience') ? 1.18 : 1);
         var y = (progress * distance * depth).toFixed(1);
-        drop.style.transform = 'translate3d(0,' + y + 'px,0)';
+        drop.style.transform = 'translate3d(0,' + y + 'px,0) rotate(var(--drop-rot,0deg))';
       });
       coverTicking = false;
     };

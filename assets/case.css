@@ -6,8 +6,8 @@
 /* 상세 페이지 전용 토큰 — 컨테이너 폭과 제품 프라이머리 컬러 */
 .case-html{ --case-shell: 1400px; }   /* 푸터까지 같은 폭을 쓰도록 html 레벨에 둔다 */
 .case{
-  --blue: #447FCF;        /* 첫화면날씨 프라이머리 */
-  --blue-deep: #3569AF;   /* 컬러 배경 위 흰 글씨가 AA(4.5:1)를 넘는 진한 청색 */
+  --blue: #1B6EDE;        /* 첫화면날씨 프라이머리 — S78% · 흰 배경 4.85:1 (AA) */
+  --blue-deep: #1557B1;   /* 컬러 배경 위 흰 글씨가 AA(4.5:1)를 넘는 진한 청색 */
 }
 /* 상세 페이지에서만 푸터도 본문과 같은 1400px */
 .case-html .foot-inner{ max-width: var(--case-shell); }
@@ -15,6 +15,13 @@
 
 /* ── 섹션 공통 ──────────────────────────────────────── */
 .case-sec{ padding: 96px 0; }
+/* 표지와 같은 웨시를 쓰는 섹션 */
+.case-sec--wash{
+  background:
+    radial-gradient(72% 62% at 88% 4%, #E6F0FC 0%, rgba(230,240,252,0) 64%),
+    radial-gradient(52% 58% at 4% 96%, #EAF2FD 0%, rgba(234,242,253,0) 60%),
+    #FFFFFF;
+}
 .case-label{
   font-family: var(--num); font-size: 12px; font-weight: 600;
   letter-spacing: .16em; text-transform: uppercase; color: var(--blue);
@@ -38,7 +45,11 @@
   min-height: 960px;
   padding: 120px 0 96px;
   display: flex; align-items: center;
-  background: linear-gradient(45deg, #EAEEF5 0%, #DBE7F9 100%);
+  /* 흰 바탕 위에 쿨 블루만 얹는다. R<B 를 유지해야 누렇게 뜨지 않는다. */
+  background:
+    radial-gradient(62% 58% at 14% 6%,  #D5E6FA 0%, rgba(213,230,250,0) 62%),
+    radial-gradient(56% 62% at 94% 92%, #DEEBFB 0%, rgba(222,235,251,0) 60%),
+    #FFFFFF;
 }
 .case-hero > .case-inner{ width: 100%; }
 .case-hero-grid{
@@ -65,7 +76,8 @@
 .case-pills{ display: flex; flex-wrap: wrap; gap: 8px; margin-top: 28px; }
 .case-pills span{
   font-size: 13px; padding: 8px 14px; border-radius: 8px;
-  background: rgba(255,255,255,.5); color: var(--blue); font-weight: 600;
+  /* 표지 바탕이 흰색이라 반투명 흰 칩은 형태가 사라진다 — 연한 블루 면으로 */
+  background: #E4EEFC; color: var(--blue); font-weight: 600;
 }
 .case-meta{
   margin-top: 120px; display: grid; gap: 28px; max-width: 560px;
@@ -132,9 +144,9 @@
   font-family: var(--num); font-size: 22px; font-weight: 700;
   letter-spacing: -.03em; line-height: 1; color: #fff;
 }
-.fn-fill--1{ background: #A9C6E8; }
+.fn-fill--1{ background: #B6D1F4; }
 .fn-fill--1 b{ color: #1F4E8C; }
-.fn-fill--2{ background: #6A9DD8; }
+.fn-fill--2{ background: #7BABEC; }
 .fn-fill--3{ background: var(--blue-deep); }
 
 /* 빠져나간 구간 — 트랙 위에 라벨만 */
@@ -231,13 +243,13 @@
   display: block; font-size: 14px; font-weight: 700; letter-spacing: -.02em; color: var(--ink);
 }
 
-.bar-track{ height: 36px; border-radius: 8px; background: #E7EBF1; overflow: hidden; }
+.bar-track{ height: 36px; border-radius: 8px; background: #DFEBFA; overflow: hidden; }
 .bar-fill{ height: 100%; border-radius: 8px; background: var(--blue); }
 
 /* 막대 색 = 도넛 카테고리 색 */
-.bar-fill--a{ background: #447FCF; }
-.bar-fill--b{ background: #86ADDD; }
-.bar-fill--c{ background: #BACDE6; }
+.bar-fill--a{ background: #1B6EDE; }
+.bar-fill--b{ background: #7BABEC; }
+.bar-fill--c{ background: #B6D1F4; }
 .bar-row > b{ font-family: var(--num); font-size: 13px; font-weight: 600; color: var(--ink); text-align: right; }
 
 /* ── 전략: 다크 섹션 · 문제 → 가설 ──────────────────── */
@@ -1078,62 +1090,58 @@
 .tr-sol-head em b{ font-weight: 700; color: #2FD3A8; }
 .tr-sol > b{ font-size: 18px; font-weight: 700; letter-spacing: -.03em; line-height: 1.5; color: #fff; }
 
-/* 데스크 리서치 */
-.tr-research{ margin-top: 54px; display: grid; grid-template-columns: 1fr 1fr; gap: 22px; align-items: stretch; }
+/* 데스크 리서치 — 기록물처럼 비교와 응답을 바로 읽게 한다 */
+/* 맨 선 하나로 나누던 두 조사를 카드로 세운다 — 다른 프로젝트의
+   리서치 섹션과 같은 구조(헤더 · 구분선 · 본문 · 결론 박스). 컬러는 그대로. */
+.tr-research{ margin-top: 48px; display: grid; grid-template-columns: 1fr 1fr; gap: 32px; align-items: stretch; }
 .tr-rcard{
-  padding: 34px 36px 36px; border-radius: 18px; background: #1A1F23;
-  display: flex; flex-direction: column;
+  min-width: 0; display: flex; flex-direction: column;
+  padding: 40px; border-radius: 20px;
+  background: rgba(255,255,255,.04);
 }
-.tr-rcard > em{ font-style: normal; font-size: 13px; font-weight: 600; color: #2FD3A8; }
-.tr-rcard > b{ display: block; margin-top: 12px; font-size: 17px; font-weight: 700; letter-spacing: -.025em; color: #fff; }
-.tr-rcard > p{ margin-top: 12px; font-size: 13px; line-height: 1.7; color: rgba(255,255,255,.56); }
-.tr-rcard > p b{ font-weight: 700; color: #fff; }
+.tr-rcard-head{
+  display: flex; justify-content: space-between; align-items: baseline; gap: 16px;
+  padding-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,.14);
+}
+.tr-rcard h3{ font-size: 18px; font-weight: 700; letter-spacing: -.025em; color: #fff; }
+.tr-rcard-src{ font-size: 12px; color: rgba(255,255,255,.46); white-space: nowrap; }
+.tr-rcard > p{ margin-top: 16px; font-size: 13px; line-height: 1.7; color: rgba(255,255,255,.62); }
 
-.tr-table{ width: 100%; margin-top: 30px; border-collapse: separate; border-spacing: 0 8px; }
-.tr-table th{
-  padding: 0 16px 6px; text-align: left;
-  font-size: 12px; font-weight: 500; color: rgba(255,255,255,.4);
+/* 결론 — 두 카드에서 같은 높이에 놓이도록 아래로 밀어붙인다 */
+.tr-rcard > .tr-take{   /* .tr-rcard > p 의 margin-top 을 이기려면 같은 특정도가 필요 */
+  margin-top: auto; padding: 16px 18px; border-radius: 12px;
+  background: rgba(47,211,168,.10);
+  font-size: 13px; line-height: 1.75; color: rgba(255,255,255,.74);
 }
+.tr-take b{ font-weight: 700; color: #61D9BC; }
+
+.tr-table-wrap{ margin-top: 32px; overflow-x: auto; overscroll-behavior-inline: contain; }
+.tr-table{ width: 100%; min-width: 480px; border-collapse: collapse; }
+.tr-table th{ padding: 0 12px 16px; border-bottom: 1px solid rgba(255,255,255,.28); text-align: left; font-size: 11px; font-weight: 500; color: rgba(255,255,255,.48); white-space: nowrap; }
+.tr-table th:first-child,.tr-table td:first-child{ padding-left: 0; }
 .tr-table th:not(:first-child):not(:nth-child(2)){ text-align: center; }
-.tr-table td{
-  padding: 17px 16px; background: #22282D;
-  font-size: 13px; color: rgba(255,255,255,.62);
-}
-.tr-table td:first-child{
-  border-radius: 10px 0 0 10px; font-weight: 700; color: #fff;
-}
-.tr-table td:last-child{ border-radius: 0 10px 10px 0; }
+.tr-table td{ height: 48px; padding: 0 12px; border-bottom: 1px solid rgba(255,255,255,.12); font-size: 12px; color: rgba(255,255,255,.72); }
+.tr-table td:first-child{ font-weight: 600; color: #fff; white-space: nowrap; }
+.tr-table td:nth-child(2){ font-size: 11px; color: rgba(255,255,255,.48); white-space: nowrap; }
 .tr-table td:not(:first-child):not(:nth-child(2)){ text-align: center; }
-.tr-table .is-self td{ background: #1B2F2C; }
-.tr-table .is-self td:first-child{ color: #2FD3A8; box-shadow: inset 1px 0 0 #2FD3A8, inset 0 1px 0 #2FD3A8, inset 0 -1px 0 #2FD3A8; }
-.tr-table .is-self td{ box-shadow: inset 0 1px 0 rgba(47,211,168,.5), inset 0 -1px 0 rgba(47,211,168,.5); }
-.tr-foot{
-  margin-top: auto; padding-top: 30px;
-  font-size: 13px; line-height: 1.7; color: rgba(255,255,255,.44);
-}
-.tr-foot b{ font-weight: 600; color: #2FD3A8; }
+.tr-table .is-self td:first-child,.tr-table .is-self td:nth-child(2){ color: #61D9BC; }
+.tr-foot{ margin-top: 20px; margin-bottom: 28px; font-size: 12px; line-height: 1.65; color: rgba(255,255,255,.48); }
 
-.tr-survey{ margin-top: 30px; display: grid; grid-template-columns: auto 1fr; gap: 44px; align-items: center; }
-.tr-donut{ width: 210px; height: 210px; flex-shrink: 0; }
-.tr-donut circle{ stroke-width: 44; }
-.tr-keys{ list-style: none; display: grid; gap: 15px; }
-.tr-keys li{ display: grid; grid-template-columns: 12px 1fr auto; gap: 12px; align-items: center; }
-.tr-keys i{ width: 12px; height: 12px; border-radius: 3px; background: var(--c); }
-.tr-keys span{ font-size: 13px; color: rgba(255,255,255,.62); }
-.tr-keys b{ font-size: 14px; font-weight: 700; color: rgba(255,255,255,.62); }
-.tr-keys .is-lead{ color: #2FD3A8; }
-
-.tr-order{
-  margin-top: 30px; padding: 18px 22px; border-radius: 10px;
-  border: 1px solid rgba(47,211,168,.34);
-  display: flex; align-items: center; justify-content: center; gap: 12px; flex-wrap: wrap;
-  font-size: 13px; color: rgba(255,255,255,.44);
+.tr-survey-list{
+  list-style: none; margin: 32px 0; display: grid; grid-template-rows: repeat(5, 48px);
 }
-.tr-order b{ font-weight: 700; color: #fff; }
-.tr-order i{ font-style: normal; color: rgba(255,255,255,.34); }
+.tr-survey-list li{ display: grid; grid-template-columns: minmax(128px, .85fr) minmax(60px, 1fr) 42px; gap: 18px; align-items: center; }
+.tr-survey-list li > span{ font-size: 13px; color: rgba(255,255,255,.72); }
+.tr-survey-list li > i{ height: 8px; border-radius: 999px; background: rgba(255,255,255,.14); overflow: hidden; }
+.tr-survey-list li > i b{ display: block; width: var(--value); height: 100%; border-radius: 999px; background: #55CBB0; }
+.tr-survey-list li:nth-child(n+3) > i b{ background: rgba(255,255,255,.5); }
+.tr-survey-list strong{ text-align: right; font-size: 13px; font-weight: 600; font-variant-numeric: tabular-nums; color: #fff; }
+.tr-survey-list li:first-child strong,.tr-survey-list li:nth-child(2) strong{ color: #61D9BC; }
 
 /* 솔루션 01 — 진입점 */
-.tr-entry{ margin-top: 54px; display: grid; grid-template-columns: 1fr 2.1fr; gap: 22px; align-items: start; }
+/* 두 이미지의 비율(1200x1372 · 2304x1372)이 달라, 폭 비를 1:1.92 로 두어야
+   렌더 높이가 같아진다. 2.1 이면 우측이 45px 더 길어진다. */
+.tr-entry{ margin-top: 54px; display: grid; grid-template-columns: 1fr 1.92fr; gap: 22px; align-items: start; }
 /* 캡션은 제목·본문과 같이 좌측 정렬로 맞춘다 */
 .tr-entry-main{ padding: 32px; border-radius: 18px; background: #EDF6F3; }
 .tr-cap{
@@ -1195,6 +1203,7 @@
 @media (max-width: 1200px){
   .tr-stats{ grid-template-columns: repeat(2, 1fr); gap: 24px 0; }
   .tr-split, .tr-research, .tr-entry, .tr-ab{ grid-template-columns: 1fr; }
+  .tr-research{ gap: 18px; }
   .tr-ps-row{ grid-template-columns: 1fr; gap: 16px; }
   .tr-arrow{ display: none; }
   .tr-abbar{ grid-template-columns: repeat(2, 1fr); gap: 20px 0; }
@@ -1205,7 +1214,11 @@
 }
 @media (max-width: 720px){
   .tr-stats, .tr-abbar, .tr-entry-rest, .tr-ab-body{ grid-template-columns: 1fr; }
-  .tr-survey{ grid-template-columns: 1fr; justify-items: center; }
+  .tr-rcard{ padding: 28px 24px; }
+  .tr-survey-list{ grid-template-rows: repeat(5, 44px); margin: 24px 0; }
+  .tr-survey-list li{ grid-template-columns: minmax(104px, .9fr) minmax(48px, 1fr) 38px; gap: 12px; }
+  .tr-rcard-head{ align-items: flex-start; flex-direction: column; gap: 5px; }
+  .tr-survey-list li{ grid-template-columns: minmax(104px, .9fr) minmax(48px, 1fr) 38px; gap: 9px; }
   .tr-insight{ grid-template-columns: 1fr; gap: 14px; }
   .tr-insight p{ padding-left: 0; border-left: 0; }
   .tr-out-h2{ font-size: 30px; }
@@ -1574,7 +1587,7 @@
 /* 반경 — 좁은 열에 맞춘 컴팩트 표기 */
 .gd-radius{ margin-top: 14px; display: flex; gap: 14px; }
 .gd-radius > div{ text-align: center; }
-.gd-radius i{ display: block; width: 46px; height: 34px; background: #E7EBF1; }
+.gd-radius i{ display: block; width: 46px; height: 34px; background: #DFEBFA; }
 .gd-radius b{ display: block; margin-top: 8px; font-family: var(--num); font-size: 11px; font-weight: 700; color: var(--ink-2); }
 .gd-radius em{ display: block; margin-top: 2px; font-family: var(--num); font-style: normal; font-size: 10px; color: var(--ink-3); }
 
@@ -1931,7 +1944,7 @@
 /* 반경 */
 .tk-radius{ display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
 .tk-radius > div{ padding: 16px 14px 14px; border: 1px solid #EDF0F5; border-radius: 8px; }
-.tk-radius i{ display: block; width: 44px; height: 44px; margin-bottom: 12px; background: #E7EBF1; }
+.tk-radius i{ display: block; width: 44px; height: 44px; margin-bottom: 12px; background: #DFEBFA; }
 .tk-radius b{ display: block; font-family: var(--num); font-size: 11.5px; font-weight: 700; color: var(--ink); }
 .tk-radius em{ display: block; margin-top: 3px; font-family: var(--num); font-style: normal; font-size: 10.5px; color: var(--ink-3); }
 .tk-radius span{ display: block; margin-top: 6px; font-size: 11px; color: var(--ink-3); }
