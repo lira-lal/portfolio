@@ -6,14 +6,19 @@
 <title>말하는 번역기 — 구독 서비스 도입 · 김리라</title>
 <meta name="description" content="일회성 결제 구조를 구독 모델로 전환해 반복 수익 구조를 만든 과정. 진입 설계와 A/B 테스트로 구독 결제 수익 12% 상승.">
 <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" rel="stylesheet">
+<link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="assets/favicon-180.png">
 <link rel="stylesheet" href="assets/site.css">
 <link rel="stylesheet" href="assets/case.css">
+<!-- 첫 페인트 전에 숨긴다 — body 끝 스크립트를 기다리면 콘텐츠가 한 번 비친다.
+     JS 가 꺼져 있으면 이 줄이 실행되지 않아 내용은 그대로 보인다. -->
+<script>document.documentElement.className += ' js-cv';</script>
 </head>
 <body>
 
 <div class="case-stage">
 
-<a class="case-close" href="projects.html" aria-label="닫기 — 프로젝트 목록으로">
+<a class="case-close" href="index.html" aria-label="닫기 — 이전 화면으로">
   <span class="case-close-icon" aria-hidden="true"></span>
 </a>
 
@@ -274,7 +279,6 @@
 
       <div class="res-head">
         <div class="out-label">Result &amp; Insight</div>
-        <p class="res-basis">측정 · 구독 도입 후 3개월<br>전체 유료 사용자 기준</p>
       </div>
 
       <div class="res-metrics">
@@ -324,7 +328,6 @@
     <div class="foot-links">
       <a href="index.html">Main</a>
       <a href="resume.html">Resume</a>
-      <a href="projects.html">Projects</a>
     </div>
   </div>
 </footer>

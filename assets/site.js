@@ -465,11 +465,22 @@
         if (e.metaKey || e.ctrlKey || e.shiftKey || e.button !== 0) return;
         e.preventDefault();
         var href = closeBtn.getAttribute('href');
+        /* 들어온 곳으로 되돌린다. 메인에서 썸네일로 바로 들어오므로
+           정해진 목적지로 보내면 가 본 적 없는 화면으로 나가게 된다.
+           referrer 는 믿을 수 없다 — file:// 로 열면 비어 있고 HTTP 에서도
+           정책에 따라 빈다. 사이트 안에서 눌렀다는 표식을 직접 남겨 본다. */
+        var canBack = (function () {
+          if (history.length <= 1) return false;
+          try { if (sessionStorage.getItem('pf:internal') === '1') return true; } catch (err) {}
+          try { return !!document.referrer && new URL(document.referrer).origin === location.origin; }
+          catch (err) { return false; }
+        }());
         var done = false;
         var go = function () {
           if (done) return;
           done = true;
-          location.href = href;
+          if (canBack) history.back();
+          else location.href = href;
         };
         stage.classList.remove('is-entering');
         stage.classList.add('is-leaving');
@@ -481,3 +492,469 @@
     }
   }
 })();
+
+
+/* ── 메인: 스크롤 진입 디졸브 ────────────────────────────
+   섹션이 보이기 시작하면 안쪽 블록을 순차로 띄운다. 표지는 첫 화면이라 제외.
+   IntersectionObserver 대신 스크롤 시 위치를 직접 재는 방식 — 대상이 4개뿐이라
+   비용이 없고, 콜백 전달 타이밍에 기대지 않아 동작이 결정적이다. */
+(function () {
+  'use strict';
+  var main = document.querySelector('main');
+  if (!main) return;
+
+  var secs = Array.prototype.slice.call(main.querySelectorAll('.sec'))
+    .filter(function (s) { return s.parentNode === main; });
+  if (!secs.length) return;
+
+  document.documentElement.classList.add('js-reveal');
+
+  var PICK = '.sec-inner, .pcard, .how-title, .pillar, .voices-head, .marquee, .voices-source';
+  var groups = secs.map(function (sec) {
+    var units = sec.querySelectorAll(PICK);
+    var list = units.length ? Array.prototype.slice.call(units) : [sec];
+    list.forEach(function (el) {
+      /* rv 를 붙이기 전에 본다 — 이미 transform 으로 자리를 잡은 블록이면
+         이동은 건드리지 않고 투명도만 다룬다. */
+      if (getComputedStyle(el).transform === 'none') el.classList.add('rv-lift');
+      el.classList.add('rv');
+    });
+    return { sec: sec, list: list, done: false };
+  });
+
+  /* 블록 단위로 다룬다 — 섹션 통째로 발동하면 세로로 긴 섹션의
+     아래쪽 블록이 화면에 들어오기도 전에 재생을 끝낸다. */
+  var units = [];
+  groups.forEach(function (g, gi) {
+    g.list.forEach(function (el) { units.push({ el: el, sec: gi, done: false }); });
+  });
+
+  /* 숨김이 완전히 반영된 다음 틱에 전환을 건다. 같은 틱에서 붙이면
+     .rv 가 붙는 순간이 전환의 시작점이 돼 1→0 으로 흐려지는 게 보인다.
+     강제 리플로우(offsetHeight)만으로는 막히지 않았다 — 첫 블록만 멀쩡하고
+     나머지는 그대로 흐려졌다. 틱을 넘겨야 확실하다. */
+  var arm = function () {
+    units.forEach(function (u) { u.el.classList.add('rv-anim'); });
+  };
+  void main.offsetHeight;
+  setTimeout(arm, 0);
+
+  /* 섹션마다 '앞 블록이 실제로 뜨는 시각'을 기억한다. 늦게 걸린 아래
+     블록이 지연 0 으로 먼저 떠서 위아래가 뒤집히는 걸 막는다. */
+  var GAP = 150;
+  var secLast = {};
+
+  var show = function (u, instant) {
+    if (u.done) return;
+    u.done = true;
+    var d = 0;
+    if (!instant) {
+      var now = Date.now();
+      var at = Math.max(now, (secLast[u.sec] || 0) + GAP);
+      secLast[u.sec] = at;
+      d = (at - now) / 1000;
+    }
+    u.el.style.transitionDelay = d + 's';
+    u.el.classList.add('is-in');
+  };
+
+  var check = function () {
+    var vh = window.innerHeight || document.documentElement.clientHeight;
+    var left = 0;
+    units.forEach(function (u) {
+      if (u.done) return;
+      left++;
+      var r = u.el.getBoundingClientRect();
+      /* height 0 은 아직 레이아웃 전이라는 뜻 — 그때는 판단하지 않는다 */
+      if (r.height <= 0) return;
+      if (r.bottom < 0) { show(u, true); return; }   /* 이미 지나침 */
+      if (r.top < vh * 0.86) show(u);
+    });
+    if (!left) {
+      window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('resize', check);
+    }
+  };
+
+  /* rAF 에만 기대면 콜백이 안 올 때 아무것도 드러나지 않는다.
+     대상이 열 개 남짓이라 동기 호출 + 시간 스로틀로 충분하다. */
+  var last = 0;
+  var onScroll = function () {
+    var now = Date.now();
+    if (now - last < 60) return;
+    last = now;
+    check();
+  };
+
+  window.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('resize', check);
+
+  /* 파싱 시점엔 레이아웃이 없어 높이가 0 이다 — 그려진 뒤 다시 본다 */
+  var recheck = function () { check(); };
+  recheck();
+  window.addEventListener('load', recheck);
+  setTimeout(recheck, 300);
+
+  /* 안전장치 — 레이아웃 자체가 안 잡혔을 때만 전부 드러낸다.
+     무조건 푸는 타이머를 두면 표지에 4초만 머물러도 아래가 다 끝나 있다.
+     '아직 아무것도 안 떴는지' 로 판단해서도 안 된다 — 표지가 한 화면을
+     다 쓰므로 처음엔 원래 아무것도 안 뜬 상태가 정상이다.
+     높이를 못 재는 경우, 즉 측정이 실패한 때만 콘텐츠를 살린다. */
+  setTimeout(function () {
+    var measurable = units.some(function (u) {
+      return u.el.getBoundingClientRect().height > 0;
+    });
+    if (!measurable) units.forEach(function (u) { show(u, true); });
+  }, 4000);
+}());
+
+
+/* ── 상세 페이지: 스크롤 진입 연출 ───────────────────────
+   .case-stage 가 스크롤을 소유하므로 window 가 아니라 거기에 붙인다.
+   트리거는 섹션이 아니라 블록 단위다 — 섹션이 뷰포트보다 커서
+   섹션 기준으로 잡으면 아래쪽 블록이 화면 밖에서 애니메이션을 끝낸다. */
+(function () {
+  'use strict';
+  var stage = document.querySelector('.case-stage');
+  var root  = stage && stage.querySelector('.case');
+  if (!stage || !root) return;
+
+  var PICK = [
+    /* 커버는 한 덩어리로 묶지 않고 조각으로 둔다 — 로고·제목·성과·정보·목업이
+       차례로 들어와야 첫 화면이 읽히는 순서대로 열린다. */
+    '.case-brand', '.case-hero-grid h1', '.case-pills', '.case-meta',
+    '.case-hero-visual', '.case-hero-mock',
+    '.case-label', '.case-h2', '.case-lead', '.case-inner > p',
+    /* 01 위젯 */
+    '.dcard', '.keypoint', '.voc-split', '.voc-meta', '.strat-row',
+    '.sol-text', '.sol-ab', '.sol-mocks', '.out-layout',
+    /* 02 지금날씨 */
+    '.nw-card', '.nw-steps', '.nw-research', '.nw-venn', '.nw-split',
+    '.nw-shot-wide', '.dsx-panels', '.nw-out-text', '.nw-out-mocks',
+    /* 03 말하는번역기 */
+    '.tr-stats', '.tr-split', '.tr-insight', '.tr-ps', '.tr-research',
+    '.tr-entry', '.tr-abbar', '.tr-ab', '.tr-out-text', '.tr-out-mocks',
+    /* 04 디자인 옵스 */
+    '.op-shot', '.op-ps', '.op-flow', '.op-flow-head', '.op-asis',
+    '.op-sys-head > p',                       /* 라벨·제목 옆 2단 설명 문단 */
+    '.op-sys-grid', '.op-scale-text', '.op-scale-mock',
+    /* 공통 — 결과 */
+    '.res-head', '.res-metrics', '.res-insights'
+  ].join(', ');
+
+  var picked = Array.prototype.slice.call(root.querySelectorAll(PICK));
+  if (!picked.length) return;
+
+  /* 이미 선택된 조상이 있으면 뺀다 — 부모·자식이 겹쳐 두 번 흐려지는 걸 막는다 */
+  picked = picked.filter(function (el) {
+    for (var p = el.parentElement; p && p !== root; p = p.parentElement) {
+      if (picked.indexOf(p) !== -1) return false;
+    }
+    return true;
+  });
+
+  document.documentElement.classList.add('js-cv');
+
+  /* 좌측 인덱스(.case-nav)가 세는 것과 같은 섹션 목록 */
+  var secs = Array.prototype.filter.call(root.children, function (el) {
+    return el.tagName === 'SECTION';
+  });
+  /* 커버는 <header> 라 섹션 목록에 없다. -1 로 두고 따로 다룬다. */
+  var secOf = function (el) {
+    for (var p = el; p && p !== root; p = p.parentElement) {
+      var i = secs.indexOf(p);
+      if (i !== -1) return i;
+    }
+    return -1;
+  };
+
+  /* 0 에서 자라야 할 막대들 — 페이지마다 구현이 다르다 */
+  /* 03 은 값이 li 에 적혀 있고 안쪽 b 가 상속받아 폭을 잡는다 —
+     값은 li 에서 바꾸고, 전환은 CSS 에서 b 에 걸어 둔다. */
+  var BARS = ['.bar-fill', '.nw-bar-fill', '.nw-stack-seg',
+              '.tr-survey-list li'].join(', ');
+
+  var CIRC = 2 * Math.PI * 59;          /* 도넛 반지름 59 의 둘레 */
+
+  var units = picked.map(function (el) {
+    /* cv 를 붙이기 전에 본다 — 이미 transform 으로 자리를 잡은 블록이면
+       이동은 건드리지 않고 투명도만 다룬다. */
+    if (getComputedStyle(el).transform === 'none') el.classList.add('cv-lift');
+    el.classList.add('cv');
+
+    /* 막대는 폭을 0 으로 내려 두었다가 블록이 뜰 때 되돌린다.
+       02 는 width 를 직접 쓰고 03 은 --value 로 width 를 계산해서,
+       어느 쪽으로 적힌 값인지 보고 같은 자리에 돌려 놓는다. */
+    var bars = Array.prototype.map.call(el.querySelectorAll(BARS), function (b) {
+      var v = b.style.getPropertyValue('--value');
+      if (v) {
+        b.style.setProperty('--value', '0%');
+        return { el: b, prop: '--value', v: v };
+      }
+      var w = b.style.width || '0%';
+      b.style.width = '0%';
+      return { el: b, prop: 'width', v: w };
+    });
+    /* 꺾은선은 길이만큼 dash 를 밀어 두었다가 0 으로 되돌려 그려 낸다.
+       .tr-mark 는 점선 모양 자체가 dasharray 라 건드리지 않는다. */
+    var draws = Array.prototype.map.call(el.querySelectorAll('.tr-line'), function (p) {
+      var len = p.getTotalLength();
+      p.style.strokeDasharray = len.toFixed(1);
+      p.style.strokeDashoffset = len.toFixed(1);
+      return { el: p, len: len };
+    });
+
+    /* 선이 다 그려진 뒤에 얹히는 것들 — 면·기준점·보조선·말풍선 */
+    var lates = draws.length
+      ? Array.prototype.slice.call(el.querySelectorAll('.tr-area, .tr-dot, .tr-mark, .tr-cross, .tr-tag'))
+      : [];
+    lates.forEach(function (e) { e.classList.add('cv-late'); });
+
+    var arcs = Array.prototype.map.call(el.querySelectorAll('.donut circle'), function (c, i) {
+      var d = c.getAttribute('stroke-dasharray');
+      c.setAttribute('stroke-dasharray', '0 ' + CIRC.toFixed(1));
+      c.style.transitionDelay = (0.16 + i * 0.16) + 's';
+      return { el: c, d: d };
+    });
+
+    /* 커버는 01 이 <header>, 02~04 가 <section> 이라 섹션 판정이 갈린다.
+       태그가 아니라 .case-hero 안에 있는지로 본다. */
+    return {
+      el: el, sec: secOf(el), hero: !!el.closest('.case-hero'),
+      bars: bars, arcs: arcs, draws: draws, lates: lates, done: false
+    };
+  });
+
+  /* 숨김 상태를 먼저 한 번 반영시킨 뒤에 전환을 건다.
+     순서를 바꾸면 .cv 가 붙는 순간이 전환의 시작점이 돼
+     내용이 1초에 걸쳐 흐려지는 게 보인다. 리플로우는 여기 한 번뿐이다. */
+  void root.offsetHeight;
+  units.forEach(function (u) { u.el.classList.add('cv-anim'); });
+
+  /* 섹션마다 '앞 블록이 실제로 뜨는 시각'을 기억한다.
+     한 번에 걸린 묶음에만 지연을 매기면, 나중에 따로 걸린 아래 블록이
+     지연 0 으로 먼저 떠서 위아래 순서가 뒤집힌다. 절대 시각으로 줄을
+     세워야 위에서부터 아래로 순서가 지켜진다. */
+  var GAP = 160;                        /* 블록 사이 최소 간격(ms) */
+  var secLast = {};
+
+  var show = function (u, instant) {
+    if (u.done) return;
+    u.done = true;
+    var d = 0;
+    if (!instant) {
+      var now = Date.now();
+      var at = Math.max(now, (secLast[u.sec] || 0) + GAP);
+      secLast[u.sec] = at;
+      d = (at - now) / 1000;
+    }
+    u.el.style.transitionDelay = d + 's';
+    /* 0 값은 준비 단계에서 이미 반영돼 있어 바로 되돌려도 전환이 걸린다.
+       rAF 에 맡기면 콜백이 안 올 때 0% 가 남아 수치가 틀리게 보인다. */
+    u.bars.forEach(function (b, i) {
+      b.el.style.transitionDelay = (d + 0.1 + i * 0.07) + 's';
+      if (b.prop === '--value') b.el.style.setProperty('--value', b.v);
+      else b.el.style.width = b.v;
+    });
+    u.arcs.forEach(function (a, i) {
+      a.el.style.transitionDelay = (d + 0.16 + i * 0.16) + 's';
+      a.el.setAttribute('stroke-dasharray', a.d);
+    });
+    u.draws.forEach(function (p, i) {
+      p.el.style.transitionDelay = (d + 0.14 + i * 0.22) + 's';
+      p.el.style.strokeDashoffset = '0';
+    });
+    u.lates.forEach(function (e, i) {
+      e.style.transitionDelay = (d + 1.05 + i * 0.07) + 's';
+      e.classList.add('is-in');
+    });
+    u.el.classList.add('is-in');
+  };
+
+  /* 좌측 인덱스가 켜지는 섹션만 재생한다.
+     현재 섹션 판정은 .case-nav 의 sync() 와 같은 식(화면 35% 선)을 쓴다.
+     아직 인덱스가 안 켜진 아래 섹션은 손대지 않으므로 줄줄이 터지지 않고,
+     켜진 섹션 안에서는 블록이 화면에 들어온 것부터 움직여
+     긴 섹션의 아래쪽도 지나치지 않는다. */
+  var check = function () {
+    var vh = stage.clientHeight;
+    var line = stage.scrollTop + vh * 0.35;
+    var cur = 0;
+    secs.forEach(function (sec, i) { if (sec.offsetTop <= line) cur = i; });
+
+    var left = 0;
+    units.forEach(function (u) {
+      if (u.done) return;
+      left++;
+      /* 커버는 항상 첫 화면이다. 위치를 재지 않고 바로 연다 —
+         .case-stage 진입 애니메이션이 측정을 한 화면만큼 어긋내는 동안
+         기다리면 커버가 1초 가까이 늦게 열린다. */
+      if (u.hero || u.sec < 0) { show(u); return; }
+      if (u.sec > cur) return;                    /* 인덱스가 아직 안 켜짐 */
+      if (u.sec < cur) { show(u, true); return; } /* 지나친 섹션 — 즉시, 연출 없이 */
+      var r = u.el.getBoundingClientRect();
+      if (r.height <= 0) return;                  /* 아직 레이아웃 전 */
+      if (r.top < vh * 0.88) show(u);             /* 켜진 섹션 안에서 화면에 든 것 */
+    });
+    if (!left) {
+      stage.removeEventListener('scroll', onScroll);
+      window.removeEventListener('resize', check);
+    }
+  };
+
+  /* rAF 에만 기대면 콜백이 안 올 때 아무것도 드러나지 않는다.
+     대상이 수십 개라 동기 호출 + 시간 스로틀로 충분하다. */
+  var last = 0;
+  var onScroll = function () {
+    var now = Date.now();
+    if (now - last < 60) return;
+    last = now;
+    check();
+  };
+
+  stage.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('resize', check);
+
+  /* .case-stage 는 한 화면 아래에서 올라오는 진입 애니메이션을 갖는다.
+     그 동안은 모든 블록이 뷰포트 밖으로 측정되므로, 끝난 뒤 다시 본다. */
+  var recheck = function () { check(); };
+  recheck();
+  window.addEventListener('load', recheck);
+  stage.addEventListener('animationend', recheck);
+  stage.addEventListener('transitionend', recheck);
+  [300, 800, 1500].forEach(function (ms) { setTimeout(recheck, ms); });
+
+  /* 안전장치 — 장치가 통째로 불발됐을 때만 전부 드러낸다.
+     무조건 푸는 타이머를 두면 한 섹션에 오래 머무르는 것만으로
+     아래 섹션이 전부 재생돼 버린다. 첫 화면 블록조차 안 드러났을 때,
+     즉 측정이 실패한 경우에만 콘텐츠를 살린다. */
+  setTimeout(function () {
+    var measurable = units.some(function (u) {
+      return u.el.getBoundingClientRect().height > 0;
+    });
+    if (!measurable) units.forEach(function (u) { show(u, true); });
+  }, 4500);
+}());
+
+
+/* ── 커버 타이틀 타이핑 ─────────────────────────────────
+   한 줄을 다 친 뒤 다음 줄로 넘어가고, 끝나면 커서만 깜빡인다.
+   원문은 지우지 않고 숨긴 채 자리만 잡아 둬서 레이아웃이 밀리지 않는다.
+   JS 가 꺼져 있거나 모션을 줄이는 설정이면 원문이 그대로 보인다. */
+(function () {
+  'use strict';
+  var cover = document.querySelector('.cover');
+  if (!cover) return;
+
+  /* 타이틀 외 글자들 — 타이틀을 다 친 뒤 차례로 떠오른다.
+     시각을 한곳에 두려고 타이핑과 같은 자리에서 다룬다. */
+  var ENTER = [
+    ['.cover-brand',        160],     /* 이름은 타이틀보다 먼저 */
+    ['.cover-sub',         1620],     /* 타이틀이 끝나는 즈음 */
+    ['.cover-bottom-left',  1900],
+    ['.cover-bottom-right', 2160]
+  ];
+  var fades = ENTER.map(function (row) {
+    var el = cover.querySelector(row[0]);
+    if (el) el.classList.add('cv-co');
+    return { el: el, at: row[1] };
+  }).filter(function (f) { return f.el; });
+
+  /* 숨김을 먼저 반영시킨 뒤에 전환을 건다 — 순서를 바꾸면
+     클래스가 붙는 순간이 전환의 시작점이 돼 흐려지는 게 보인다. */
+  if (fades.length) {
+    void cover.offsetHeight;
+    fades.forEach(function (f) {
+      f.el.classList.add('cv-co-anim');
+      setTimeout(function () { f.el.classList.add('is-in'); }, f.at);
+    });
+  }
+
+  /* 물방울 — 흐릿하게 깔렸다가 풀린다. 셋이 조금씩 어긋나야
+     한 장의 그림이 통째로 선명해지는 게 아니라 깊이가 생긴다. */
+  var drops = Array.prototype.slice.call(cover.querySelectorAll('.cover-drop'));
+  if (drops.length) {
+    void cover.offsetHeight;                     /* 흐린 상태를 먼저 반영 */
+    drops.forEach(function (d, i) {
+      d.classList.add('dr-anim');
+      setTimeout(function () { d.classList.add('is-clear'); }, 120 + i * 180);
+      /* 다 풀리면 합성 힌트를 거둔다 — 남겨 두면 메모리만 잡는다 */
+      d.addEventListener('transitionend', function (e) {
+        if (e.propertyName === 'filter') d.classList.add('is-settled');
+      });
+    });
+  }
+
+  var h1 = cover.querySelector('h1');
+  if (!h1) return;
+
+  var lines = Array.prototype.filter.call(h1.children, function (e) {
+    return e.tagName === 'SPAN';
+  });
+  if (!lines.length) return;
+
+  var full = lines.map(function (l) { return l.textContent.trim(); });
+  h1.setAttribute('aria-label', full.join(' '));      /* 읽히는 건 완성된 문장 */
+
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+  var live = [], txts = [];
+  lines.forEach(function (l, i) {
+    l.textContent = '';
+    l.setAttribute('aria-hidden', 'true');
+    var box   = document.createElement('i'); box.className   = 'ty-box';
+    var ghost = document.createElement('i'); ghost.className = 'ty-ghost';
+    var out   = document.createElement('i'); out.className   = 'ty-live';
+    var txt   = document.createElement('span');
+    ghost.textContent = full[i];
+    out.appendChild(txt);
+    box.appendChild(ghost); box.appendChild(out);
+    l.appendChild(box);
+    live.push(out); txts.push(txt);
+  });
+
+  var SPEED = 34, JITTER = 24, LINE_GAP = 200, START = 300;
+  var li = 0, ci = 0;
+
+  var tick = function () {
+    if (li >= full.length) { h1.classList.add('ty-done'); return; }
+    var s = full[li];
+    if (ci < s.length) {
+      txts[li].textContent = s.slice(0, ++ci);
+      setTimeout(tick, SPEED + Math.random() * JITTER);
+    } else {
+      li++; ci = 0;
+      setTimeout(tick, LINE_GAP);
+    }
+  };
+  setTimeout(tick, START);
+}());
+
+
+/* ── 사이트 안에서 이동했는지 기록 ───────────────────────
+   상세 페이지의 닫기가 '뒤로 가기' 를 쓸지 판단하는 근거다.
+   document.referrer 는 file:// 로 열면 비어 있고 HTTP 에서도 정책에 따라
+   비어서, 같은 사이트 링크를 눌렀다는 사실을 직접 남긴다. */
+(function () {
+  'use strict';
+  document.addEventListener('click', function (e) {
+    var t = e.target;
+    var a = t && t.closest ? t.closest('a[href]') : null;
+    if (!a || a.target === '_blank') return;
+    var href = a.getAttribute('href') || '';
+    /* 바깥 주소 · 같은 문서 안 앵커 · 메일은 제외 */
+    if (!href || href.charAt(0) === '#') return;
+    if (/^[a-z][a-z0-9+.-]*:/i.test(href) && !/^https?:/i.test(href)) return;
+    if (/^https?:/i.test(href)) {
+      try { if (new URL(href).origin !== location.origin) return; }
+      catch (err) { return; }
+    }
+    try { sessionStorage.setItem('pf:internal', '1'); } catch (err) {}
+  }, true);
+}());
+
+/* 뒤로 가기로 상세가 되살아나면 떠나는 애니메이션이 남아 있다 — 지운다 */
+window.addEventListener('pageshow', function () {
+  var st = document.querySelector('.case-stage');
+  if (st) st.classList.remove('is-leaving');
+});

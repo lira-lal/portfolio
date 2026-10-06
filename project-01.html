@@ -6,8 +6,13 @@
 <title>VOC 기반 위젯 UX 개선 — 김리라</title>
 <meta name="description" content="첫화면날씨 위젯을 탐색의 시작점으로 다시 정의한 프로젝트. 위젯 DAU +28%, 상세화면 진입율 20% → 24.8%, 위젯 삭제율 62% → 40%.">
 <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" rel="stylesheet">
+<link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="assets/favicon-180.png">
 <link rel="stylesheet" href="assets/site.css">
 <link rel="stylesheet" href="assets/case.css">
+<!-- 첫 페인트 전에 숨긴다 — body 끝 스크립트를 기다리면 콘텐츠가 한 번 비친다.
+     JS 가 꺼져 있으면 이 줄이 실행되지 않아 내용은 그대로 보인다. -->
+<script>document.documentElement.className += ' js-cv';</script>
 </head>
 <body>
 
@@ -16,7 +21,7 @@
 <div class="case-stage">
 
 <!-- ── 닫기: 프로젝트 목록으로 ─────────────────────── -->
-<a class="case-close" href="projects.html" aria-label="닫기 — 프로젝트 목록으로">
+<a class="case-close" href="index.html" aria-label="닫기 — 이전 화면으로">
   <span class="case-close-icon" aria-hidden="true"></span>
 </a>
 
@@ -59,8 +64,8 @@
       <div class="case-label">Background</div>
       <h2 class="case-h2">상세 화면 진입 전,<br><em>위젯에서 이탈이 발생</em>하고 있었습니다.</h2>
       <p class="case-lead case-lead--tight">
-        위젯은 매일 노출되는 홈 화면 접점이자, 탭 한 번으로 광고 화면까지 이어지는 경로입니다.<br>
-        그런데 설치 사용자의 62%가 위젯을 삭제하고, 남은 사용자의 절반만 상세 화면에 도달했습니다.
+        앱에 들어오는 길은 앱 아이콘, 알림, 잠금화면, 위젯으로 나뉘어 있었습니다.<br>
+        그중 위젯의 상세 화면 진입이 가장 낮았고, 설치 사용자의 62%가 위젯을 삭제하고 있었습니다.
       </p>
 
       <div class="dcard">
@@ -118,7 +123,7 @@
 
       <div class="keypoint">
         <span class="keypoint-label">Key Point</span>
-        <p class="keypoint-text">상세 화면 진입으로 광고 수익을 올릴 기회를 놓치고 있었습니다. 위젯을 유지하지 않고 이탈하는 지점을 붙잡고,<br>상세 화면까지 이어질 이유를 만드는 것을 이 프로젝트의 출발점으로 삼았습니다.</p>
+        <p class="keypoint-text">상세 화면은 광고가 노출되는 주요 지점이었기 때문에, 위젯에서의 이탈은 곧 광고 수익 기회의 손실로 이어지고 있었습니다.<br>위젯을 유지하고 상세 화면까지 이어질 이유를 만드는 것을 이 프로젝트의 출발점으로 삼았습니다.</p>
       </div>
     </div>
   </section>
@@ -466,7 +471,6 @@
 
       <div class="res-head">
         <div class="out-label">Result &amp; Insight</div>
-        <p class="res-basis">측정 · 릴리즈 후 28일<br>10% 단계 배포 후 100% 확대 기준</p>
       </div>
 
       <div class="res-metrics">
@@ -516,7 +520,6 @@
     <div class="foot-links">
       <a href="index.html">Main</a>
       <a href="resume.html">Resume</a>
-      <a href="projects.html">Projects</a>
     </div>
   </div>
 </footer>

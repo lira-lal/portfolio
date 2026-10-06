@@ -771,7 +771,7 @@
 }
 .nw-note b{ font-weight: 700; color: var(--blue); }
 .nw-note:last-child{ margin-bottom: 0; }
-.nw-note--foot{ margin-top: auto; margin-bottom: 0; text-align: center; }
+.nw-note--foot{ margin-top: auto; margin-bottom: 0; }
 
 /* 인터뷰 목소리 */
 .nw-voices{ list-style: none; display: grid; gap: 30px; }
@@ -2143,4 +2143,65 @@
 
 @media (max-width: 1240px){
   .case-nav{ display: none; }
+}
+
+
+/* ── 상세 페이지 스크롤 진입 연출 ──────────────────────
+   블록이 순차로 떠오르고, 데이터 요소(막대·도넛)는 0 에서 자란다.
+   JS 가 .js-cv 를 붙이기 전에는 아무 것도 숨기지 않는다. */
+/* 숨기는 건 전환 없이 즉시 — 같은 규칙에 transition 을 두면
+   .cv 가 붙는 순간 opacity 1→0 으로 흐려지는 게 그대로 보인다.
+   그게 '처음에 미세하게 남아있는' 정체였다. */
+.js-cv .cv{ opacity: 0; }
+
+/* 떠오르는 이동은 transform 을 안 쓰는 블록에만 건다.
+   .dsx-panels 처럼 transform 으로 자리를 잡는 블록에 덮어쓰면
+   조판이 통째로 밀린다. 그런 블록은 투명도만 다룬다. */
+.js-cv .cv-lift{ transform: translateY(22px); }
+
+/* 숨김이 한 번 반영된 뒤에 JS 가 붙인다. 이때부터만 전환이 걸린다. */
+.js-cv .cv-anim{
+  /* 투명도와 이동에 다른 곡선을 쓴다. 둘 다 강한 ease-out 으로 두면
+     앞 20% 에서 거의 다 나타나 '툭' 떠오르는 것으로 읽힌다.
+     투명도는 고르게 길게, 이동만 끝에서 감속한다. */
+  transition: opacity .8s cubic-bezier(.33,0,.25,1),
+              transform .9s cubic-bezier(.22,1,.36,1);
+  will-change: opacity, transform;
+}
+.js-cv .cv.is-in{ opacity: 1; }
+.js-cv .cv-lift.is-in{ transform: none; }
+
+/* 0 에서 자라는 막대 — 페이지마다 구현이 달라 세 갈래다.
+   01 .bar-fill / 02 .nw-bar-fill·.nw-stack-seg 는 width 를 직접 쓰고,
+   03 은 --value 로 width 를 계산한다. 셋 다 used value 가 width 라
+   transition: width 하나로 걸린다. */
+.js-cv .bar-fill,
+.js-cv .nw-bar-fill,
+.js-cv .nw-stack-seg,
+.js-cv .tr-survey-list li > i b{
+  transition: width 1.05s cubic-bezier(.22,1,.36,1) .12s;
+}
+/* 폭이 0 일 때 안의 수치가 비집고 나오지 않게 */
+.js-cv .nw-stack-seg{ min-width: 0; overflow: hidden; white-space: nowrap; }
+
+/* 꺾은선 — 왼쪽에서 오른쪽으로 그려 낸다 */
+.js-cv .tr-line{ transition: stroke-dashoffset 1.5s cubic-bezier(.37,0,.2,1); }
+/* 선이 그려진 뒤 얹히는 것들 */
+.js-cv .cv-late{ opacity: 0; transition: opacity .72s cubic-bezier(.33,0,.25,1); }
+.js-cv .cv-late.is-in{ opacity: 1; }
+.js-cv .tr-mark.cv-late.is-in{ opacity: .5; }    /* 보조선은 원래 흐리다 */
+.js-cv .donut circle{ transition: stroke-dasharray 1.15s cubic-bezier(.22,1,.36,1); }
+
+@media (prefers-reduced-motion: reduce){
+  .js-cv .cv,
+  .js-cv .cv-anim{ opacity: 1 !important; transition: none !important; }
+  .js-cv .cv-lift{ transform: none !important; }
+  .js-cv .bar-fill,
+  .js-cv .nw-bar-fill,
+  .js-cv .nw-stack-seg,
+  .js-cv .tr-survey-list li > i b,
+  .js-cv .tr-line,
+  .js-cv .donut circle{ transition: none !important; }
+  .js-cv .cv-late{ opacity: 1 !important; transition: none !important; }
+  .js-cv .tr-mark.cv-late{ opacity: .5 !important; }
 }

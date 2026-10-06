@@ -6,8 +6,13 @@
 <title>지금날씨 — 2030 타겟 신규 앱 출시 · 김리라</title>
 <meta name="description" content="기존 서비스의 사용자층을 넓히기 위해 2030 타겟 날씨 앱을 MVP로 설계하고 3개월 누적 다운로드 10만건을 달성한 과정.">
 <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" rel="stylesheet">
+<link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="assets/favicon-180.png">
 <link rel="stylesheet" href="assets/site.css">
 <link rel="stylesheet" href="assets/case.css">
+<!-- 첫 페인트 전에 숨긴다 — body 끝 스크립트를 기다리면 콘텐츠가 한 번 비친다.
+     JS 가 꺼져 있으면 이 줄이 실행되지 않아 내용은 그대로 보인다. -->
+<script>document.documentElement.className += ' js-cv';</script>
 </head>
 <body>
 
@@ -15,7 +20,7 @@
 <div class="case-stage">
 
 <!-- ── 닫기: 프로젝트 목록으로 ─────────────────────── -->
-<a class="case-close" href="projects.html" aria-label="닫기 — 프로젝트 목록으로">
+<a class="case-close" href="index.html" aria-label="닫기 — 이전 화면으로">
   <span class="case-close-icon" aria-hidden="true"></span>
 </a>
 
@@ -654,7 +659,6 @@
 
       <div class="res-head">
         <div class="out-label">Result &amp; Insight</div>
-        <p class="res-basis">측정 · 서비스 출시~2024.11<br>Google Play 기준</p>
       </div>
 
       <div class="res-metrics">
@@ -704,7 +708,6 @@
     <div class="foot-links">
       <a href="index.html">Main</a>
       <a href="resume.html">Resume</a>
-      <a href="projects.html">Projects</a>
     </div>
   </div>
 </footer>

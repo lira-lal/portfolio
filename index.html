@@ -9,7 +9,12 @@
 <link rel="preload" as="image" href="files/cover-drop-top.webp" fetchpriority="high">
 <link rel="preload" as="image" href="files/cover-drop-right.webp" fetchpriority="high">
 <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" rel="stylesheet">
+<link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="assets/favicon-180.png">
 <link rel="stylesheet" href="assets/site.css">
+<!-- 표지 글자를 첫 페인트 전에 숨긴다 — body 끝 스크립트를 기다리면 한 번 비친다.
+     JS 가 꺼져 있으면 이 줄이 실행되지 않아 글자는 그대로 보인다. -->
+<script>document.documentElement.className += ' js-cover js-reveal';</script>
 </head>
 <body>
 
@@ -21,7 +26,6 @@
       <ul class="gnb-menu">
         <li><a href="index.html">Main</a></li>
         <li><a href="resume.html">Resume</a></li>
-        <li><a href="projects.html">Projects</a></li>
       </ul>
     </nav>
   </div>
@@ -56,52 +60,8 @@
     </div>
 
     <div class="more-inner">
-      <div class="more-grid">
-
-        <!-- 이력서 -->
-        <a class="more-card" href="resume.html">
-          <div class="more-visual more-visual--resume">
-            <div class="mock">
-              <div class="doc doc-back" aria-hidden="true"></div>
-              <div class="doc doc-front">
-                <span class="doc-eyebrow">Resume</span>
-                <b class="doc-name">김리라</b>
-                <span class="doc-role">Product Designer</span>
-                <div class="doc-lines" aria-hidden="true">
-                  <i style="width:88%"></i><i style="width:72%"></i><i style="width:80%"></i>
-                  <i style="width:54%"></i><i style="width:76%"></i><i style="width:64%"></i>
-                  <i style="width:84%"></i><i style="width:58%"></i><i style="width:70%"></i>
-                </div>
-              </div>
-            </div>
-            <i class="more-arrow" aria-hidden="true">→</i>
-          </div>
-          <h3>지금까지의 경험과<br>성과를 담았습니다.</h3>
-          <span class="more-action">이력서 보기</span>
-        </a>
-
-        <!-- 프로젝트 -->
-        <a class="more-card" href="projects.html">
-          <div class="more-visual more-visual--projects">
-            <div class="mock">
-              <div class="panel">
-                <span class="panel-eyebrow">Projects</span>
-                <b class="panel-title">프로젝트 기록</b>
-                <ul class="panel-rows" aria-hidden="true">
-                  <li><i class="pdot" style="--c:#4C7FE0"></i><span>VOC 기반 위젯 UX 개선</span></li>
-                  <li><i class="pdot" style="--c:#F2B23E"></i><span>2030 타겟 앱 출시</span></li>
-                  <li><i class="pdot" style="--c:#E2643C"></i><span>구독 서비스 도입</span></li>
-                  <li><i class="pdot" style="--c:#2E8B7A"></i><span>Design Ops 효율 최적화</span></li>
-                </ul>
-              </div>
-            </div>
-            <i class="more-arrow" aria-hidden="true">→</i>
-          </div>
-          <h3>문제를 발견하고<br>해결해온 과정입니다.</h3>
-          <span class="more-action">프로젝트 보기</span>
-        </a>
-
-      </div>
+      <!-- 프로젝트 썸네일 — projects.html 과 같은 데이터·같은 카드 -->
+      <div class="pgrid" id="prjGrid"></div>
     </div>
   </section>
 
@@ -160,7 +120,6 @@
         <a href="mailto:soou94@gmail.com">soou94@gmail.com</a>
       </div>
       <div class="contact-btns">
-        <a class="btn btn--solid" href="https://bit.ly/4qbDfZY" target="_blank" rel="noopener">Portfolio <span class="arw">↗</span></a>
         <a class="btn btn--solid" href="https://github.com/lira-lal" target="_blank" rel="noopener">GitHub <span class="arw">↗</span></a>
       </div>
     </div>
@@ -173,7 +132,6 @@
     <span class="num">© 2026 김리라 · Kim Rira</span>
     <div class="foot-links">
       <a href="resume.html">Resume</a>
-      <a href="projects.html">Projects</a>
       <a href="mailto:soou94@gmail.com">Email</a>
     </div>
   </div>

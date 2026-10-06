@@ -38,3 +38,14 @@ files/cover_glass_bg.*
 files/cover_bg.webp
 files/drop-*.png
 files/drop-*.webp
+
+# 개인정보가 담긴 원본 이력서 — 배포본에 올리지 않는다
+김리라_이력서.pdf
+files/resume-rira-kim.pdf
+# 작업용 사본·소스
+logo.png
+assets/case-redesign.css
+assets/rira-kim-logo.svg
+project-01-redesign.html
+files/thumb-*.webp
+files/02_지금날씨/mockup_phones_transparent.png
